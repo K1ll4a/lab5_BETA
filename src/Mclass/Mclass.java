@@ -1,16 +1,16 @@
 package Mclass;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 import java.util.Random;
 import java.time.LocalDateTime;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.ThreadLocalRandom;
-
+import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 
-public class Mclass {
+public class Mclass implements Comparable<Mclass> {
     private Double price; //Значение поля должно быть больше 0
     private String name;
     private float manufactureCost;
@@ -27,7 +27,7 @@ public class Mclass {
 
 
 
-    public Mclass() {
+    public Mclass(String name, Double price, Coordinates coordinates, UnitOfMeasure unitOfMeasure, Float manufactureCost, Organization manufacturer) {
         this.id = random.nextLong(1, 1001);
         long randomEpochSecond = ThreadLocalRandom.current().nextLong(0, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
         creationDate = LocalDateTime.ofEpochSecond(randomEpochSecond, 0, ZoneOffset.UTC);
@@ -35,17 +35,39 @@ public class Mclass {
 
 
     }
+    public Mclass(String name,Coordinates coordinates,Double price,Float manufactureCost,UnitOfMeasure unitOfMeasure,Organization manufacturer){
+        this.id = random.nextLong(1, 1001);
+        this.coordinates = coordinates;
+        long randomEpochSecond = ThreadLocalRandom.current().nextLong(0, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        creationDate = LocalDateTime.ofEpochSecond(randomEpochSecond, 0, ZoneOffset.UTC);
+        creationDate = creationDate.atZone(ZoneOffset.UTC).toLocalDateTime();
+        this.name = name;
+        this.coordinates = coordinates;
+        this.price = price;
+        this.manufactureCost = manufactureCost;
+        this.unitOfMeasure = unitOfMeasure;
+        this.manufacturer = manufacturer;
+
+    }
 
 
 
-
-    public static class Coordinates{
-        private long x;
+    public static class Coordinates implements Serializable{
+        private float x;
         private float y;
-        public Coordinates(long x,float y){
+        public Coordinates(float x,float y){
             this.x = x;
             this.y = y;
         }
+
+        public float getX() {
+            return x;
+        }
+
+        public float getY() {
+            return y;
+        }
+
         @Override
         public String toString() {
             return "{" + "x=" + x + ", y=" + y + '}';
@@ -57,11 +79,22 @@ public class Mclass {
         PCS,
         MILLILITERS,
         GRAMS;
+        public static UnitOfMeasure parseUnitOfMeasure(String input) {
+            try {
+                return UnitOfMeasure.valueOf(input);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Неверная единица измерения. Попробуйте еще раз.");
+
+            }
+            return null;
+        }
+
     }
-    public static class Organization{
+
+    public static class Organization {
         private static final Random idGenerator = new Random();
-        private int id = generateId();//Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
-        private String name; //Поле не может быть null, строка не может быть пустой
+        private Integer OrgId;//Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+        private String OrgName; //Поле не может быть null, строка не может быть пустой
         private  String fullName;//Длина строки не должна быть больше 1307, Значение этого поля должно быть уникальным, Поле не может быть null
         private OrganizationType type; //Поле может быть null
         public Organization(){
@@ -69,19 +102,25 @@ public class Mclass {
 
 
         }
-        public Organization(String name, String fullName,OrganizationType type){
-            this.id = id;
-            this.name = validateName(name);
+        public Organization(String OrgName, String fullName,OrganizationType type){
+            this.OrgId = random.nextInt(1000);
+            this.OrgName = validateName(OrgName);
+            this.fullName = validatefFullName(fullName);
+            this.type = type;
+        }
+        public Organization(Integer OrgId,String OrgName, String fullName,OrganizationType type){
+            this.OrgId = random.nextInt(1000);
+            this.OrgName = validateName(OrgName);
             this.fullName = validatefFullName(fullName);
             this.type = type;
         }
         private Integer generateId(){
             Random random = new Random();
-            int id;
+            int OrgId;
             do{
-                id = random.nextInt(1000);
-            }while (id == 0);
-            return id;
+                OrgId = random.nextInt(1000);
+            }while (OrgId == 0);
+            return OrgId;
         }
         private String validateName(String name){
             Objects.requireNonNull(name,"Значение этого поля не может быть null!");
@@ -98,11 +137,27 @@ public class Mclass {
             return fullName;
         }
 
-        public void setName(String name) {
-            if(name == null || name.isEmpty()){
+        public void setName(String OrgName) {
+            if(OrgName == null || OrgName.isEmpty()){
                 throw new IllegalArgumentException("Значение поля не может быть null!");
             }
-            this.name = name;
+            this.OrgName = OrgName;
+        }
+
+        public String getOrgName() {
+            return OrgName;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public int getOrgId() {
+            return OrgId;
+        }
+
+        public OrganizationType getType() {
+            return type;
         }
 
         public void setFullName(String fullName) {
@@ -116,13 +171,22 @@ public class Mclass {
         }
         @Override
         public String toString() {
-            return "Organization{" + "id=" + id + ", name= " + name  + ", fullName= " + fullName  + ", type= " + type + '}';
+            return "Organization{" + "id=" + OrgId + ", name= " + OrgName  + ", fullName= " + fullName  + ", type= " + type + '}';
         }
     }
     public enum OrganizationType {
         PUBLIC,
         TRUST,
         PRIVATE_LIMITED_COMPANY;
+
+        public static OrganizationType parseOrganizationType(String input){
+            try{
+                return OrganizationType.valueOf(input);
+            }catch (IllegalArgumentException e){
+                System.out.println("Неверный тип организации,попробуйте еще раз.");
+            }
+            return null;
+        }
     }
 
     public void setManufactureCost(float manufactureCost){
@@ -131,23 +195,8 @@ public class Mclass {
     public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
         this.unitOfMeasure = unitOfMeasure;
       }
-    static UnitOfMeasure parseUnitOfMeasure(String input) {
-                try {
-                     return UnitOfMeasure.valueOf(input);
-              } catch (IllegalArgumentException e) {
-                   System.out.println("Неверная единица измерения. Попробуйте еще раз.");
 
-           }
-        return null;
-    }
-    static OrganizationType parseOrganizationType(String input){
-        try{
-            return OrganizationType.valueOf(input);
-        }catch (IllegalArgumentException e){
-            System.out.println("Неверный тип организации,попробуйте еще раз.");
-        }
-        return null;
-    }
+
     private String validateName(String name){
         Objects.requireNonNull(name,"Значение этого поля не может быть null!");
         if(name.isEmpty()){
@@ -172,12 +221,67 @@ public class Mclass {
         this.manufacturer = manufacturer;
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
+    public Coordinates getCoordinates(){
+        return coordinates;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public float getManufactureCost() {
+        return manufactureCost;
+    }
+
+    public UnitOfMeasure getUnitOfMeasure() {
+        return unitOfMeasure;
+    }
+
+    public Organization getManufacturer() {
+        return manufacturer;
+    }
+
+    public static Mclass parse(String str){
+        String[] parts = str.split(",");
+        if (parts.length != 8){
+            throw new IllegalArgumentException("Invalid input string format.");
+        }
+        String name = parts[0].trim();
+        Double price = Double.parseDouble(parts[1].trim());
+        Float x = Float.parseFloat(parts[3].trim());
+        Float y = Float.parseFloat(parts[4].trim());
+        Coordinates coordinates = new Coordinates(x, y);
+        UnitOfMeasure unitOfMeasure = UnitOfMeasure.parseUnitOfMeasure(parts[5].trim());
+        String OrgName = parts[6].trim();
+        String fullName = parts[7].trim();
+        OrganizationType organizationType = OrganizationType.parseOrganizationType(parts[8].trim());
+        Float manufactureCost = Float.parseFloat(parts[9].trim());
+        Organization manufacturer = new Organization(OrgName,fullName,organizationType);
+
+        return new Mclass(name,price,coordinates,unitOfMeasure,manufactureCost,manufacturer);
+
+    }
 
     @Override
     public String toString(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return ("ID " + id + " Name " + name + " Coordinates " + coordinates.toString() + " Creation date " + creationDate.format(formatter) +  " Price " + String.valueOf(price)) + " Manufacture cost "  + String.valueOf(manufactureCost) + " Единица измерения: " + unitOfMeasure.toString() + " " +  manufacturer.toString();
+    }
+
+
+    public int compareTo(Mclass var1) {
+        return this.id.compareTo(var1.id);
     }
 
 

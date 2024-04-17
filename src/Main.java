@@ -1,27 +1,25 @@
-import Mclass.*;
+import processors.CommandProcessor;
+import processors.MclassCollection;
+import utils.FilePathReader;
 
 
-import java.util.ArrayList;
-
+import java.util.Scanner;
 
 
 public class Main {
-    public static void main(String[] args)  {
-        Filler filler = new Filler();
-        Mclass Product = new Mclass();
+    public static void main(String[] args) {
+        String fileName = FilePathReader.getXmlFilePath();
 
-
-
-
-        ArrayList<Mclass> arrayList= new ArrayList<Mclass>();
-
-        filler.Fill(Product);
-        arrayList.add(Product);
-        System.out.println(arrayList);
-        for(Mclass pr : arrayList){
-            System.out.println(pr);
+        MclassCollection mclassCollection = new MclassCollection();
+        if (fileName != null) {
+            mclassCollection.loadFromFile(fileName);
         }
+
+        Scanner scanner = new Scanner(System.in);
+        CommandProcessor commandProcessor = new CommandProcessor(mclassCollection, scanner, fileName);
+        commandProcessor.run();
     }
 }
+
 
 
