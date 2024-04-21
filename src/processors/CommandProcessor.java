@@ -15,7 +15,7 @@ public class CommandProcessor {
     private final String fileName;
     private final Map<String, CommandHandler> commandHandlers;
     private static List<String> executedScripts;
-    Random random = new Random();
+    private Random random = new Random();
 
 
     public CommandProcessor(MclassCollection var1, Scanner var2, String var3) {
@@ -51,17 +51,18 @@ public class CommandProcessor {
         this.commandHandlers.put("min_by_manufacture_cost", this::minByManufactureCost);
         this.commandHandlers.put("max_by_manufacture_cost", this::maxByManufactureCost);
         this.commandHandlers.put("count_less_than_manufacture_cost manufactureCost", this::countLessThanManufactureCost);
+        this.commandHandlers.put("add_if_min", this::addIfMin);
     }
 
     public void processCommand(String var1) {
         String[] var2 = var1.trim().split("\\s+", 2);
         String var3 = var2[0];
-        CommandHandler var4 = (CommandHandler) this.commandHandlers.get(var3);
-        if (var4 != null) {
+        CommandHandler handler = commandHandlers.get(var3);
+        if (handler != null) {
             if (var2.length > 1) {
-                var4.handle(var2[1]);
+                handler.handle(var2[1]);
             } else {
-                var4.handle((String) null);
+                handler.handle(null);
             }
         } else {
             System.out.println("Неизвестная команда: " + var3 + ". Используйте (help), чтобы посмотреть поддерживаемые команды.");
@@ -133,28 +134,28 @@ public class CommandProcessor {
     }
 
     private void info(String var1) {
-        this.mclassCollection.info();
+        mclassCollection.info();
     }
 
     private void minByManufactureCost(String var1){
-        this.mclassCollection.minByManufactureCost();
+        mclassCollection.minByManufactureCost();
     }
 
     private void maxByManufactureCost(String var1){
-        this.mclassCollection.maxByManufactureCost();
+        mclassCollection.maxByManufactureCost();
     }
 
     private void removeMclassById(String var1) {
         int var2 = Integer.parseInt(var1);
-        this.mclassCollection.removeMclassById(var2);
+        mclassCollection.removeMclassById(var2);
     }
     public void removeGreater(String var1) {
         Mclass mclass = Mclass.parse(var1); // предполагается, что класс Mclass имеет статический метод parse
-        this.mclassCollection.removeGreater(mclass);
+        mclassCollection.removeGreater(mclass);
     }
 
     private void showCollection(String var1) {
-        Iterator var2 = this.mclassCollection.getMclasses().iterator();
+        Iterator var2 = mclassCollection.getMclasses().iterator();
 
         while (var2.hasNext()) {
             Mclass var3 = (Mclass) var2.next();
@@ -164,16 +165,16 @@ public class CommandProcessor {
 
     private void countLessThanManufactureCost(String var1){
         Double var2 = Double.parseDouble(var1);
-        this.mclassCollection.countLessThanManufactureCost(var2);
+        mclassCollection.countLessThanManufactureCost(var2);
 
     }
 
     private void clearCollection(String var1) {
-        this.mclassCollection.clearCollection();
+        mclassCollection.clearCollection();
     }
 
     private void removeLast(String var1) {
-        this.mclassCollection.removeLast();
+        mclassCollection.removeLast();
     }
 
     private UnitOfMeasure promtUnitOfMeasure() {
@@ -203,6 +204,13 @@ public class CommandProcessor {
     }
 
 
+    private void addIfMin(String var1) {
+        Mclass var2 = Mclass.parse(var1); // предполагается, что есть метод для парсинга элемента
+        mclassCollection.addIfMin(var2);
+
+    }
+
+
     private Organization promtOrganization() {
         System.out.println("Введите данные об организации: ");
         boolean var1 = false;
@@ -212,6 +220,10 @@ public class CommandProcessor {
             try {
                 System.out.print("Имя: ");
                 var2 = this.scanner.nextLine();
+                if (var2.matches(".*\\d.*")) {
+                    System.out.println("Имя не должно содержать цифры.");
+                    continue;
+                }
                 if (var2.length() > 0) {
                     var1 = true;
                 } else {
@@ -228,6 +240,10 @@ public class CommandProcessor {
             try {
                 System.out.println("Полное имя: ");
                 var3 = this.scanner.nextLine();
+                if (var3.matches(".*\\d.*")) {
+                    System.out.println("Полное имя не должно содержать цифры.");
+                    continue;
+                }
                 if (var3.length() < 1307 && var3.length() > 0) {
                     var1 = true;
                 } else {
@@ -239,7 +255,7 @@ public class CommandProcessor {
         } while (!var1);
 
 
-        Integer var4 = random.nextInt(((1000 - 1) + 1) + 1);
+        Integer var4 = random.nextInt((1000 - 1 + 1) + 1);
         OrganizationType var5 = this.promtOrganizationType("Введите тип организации (PUBLIC,TRUST,PRIVATE_LIMITED_COMPANY): ");
         return new Organization(var4, var2, var3, var5);
 
@@ -394,7 +410,7 @@ public class CommandProcessor {
 
             UnitOfMeasure var11 = this.promtUnitOfMeasure();
             Organization var12 = this.promtOrganization();
-            Long var13 = random.nextLong(1000);
+            Long var13 = random.nextLong((1000 - 1 + 1) + 1);
             Mclass var14 = new Mclass(var4, new Coordinates(var6, var7), var8, var9, var11, var12);
             this.mclassCollection.updateMclass(var2, var14);
             System.out.println("Продукт с id " + var2 + " успешно обновлен.");
@@ -421,9 +437,9 @@ public class CommandProcessor {
 
     private void saveCollectionToFile (String var1){
         try {
-            this.mclassCollection.saveToFile(this.fileName);
-        } catch (Exception var3) {
-            System.err.println("Ошибка при сохранении коллекции: " + var3.getMessage());
+            mclassCollection.saveToFile(fileName);
+        } catch (Exception e) {
+            System.err.println("Ошибка при сохранении коллекции: " + e.getMessage());
         }
     }
 

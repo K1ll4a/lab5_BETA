@@ -1,6 +1,6 @@
 package Mclass;
 
-import org.jetbrains.annotations.NotNull;
+// import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Random;
@@ -164,11 +164,13 @@ public class Mclass implements Comparable<Mclass> {
             if(fullName == null || fullName.isEmpty() || fullName.length() > 1307){
                 throw new IllegalArgumentException("Поле не может быть null,длина строки не может быть больше 1307");
             }
-            this.fullName =fullName;
+            this.fullName = fullName;
         }
         public void setOrganizationType(OrganizationType type){
             this.type = type;
         }
+
+        
         @Override
         public String toString() {
             return "Organization{" + "id=" + OrgId + ", name= " + OrgName  + ", fullName= " + fullName  + ", type= " + type + '}';

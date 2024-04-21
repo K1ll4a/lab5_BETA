@@ -19,7 +19,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.Comparator;
 
-public class MclassCollection {
+public class MclassCollection  {
     ArrayList<Mclass> mclasses = new ArrayList<>();
     private ZonedDateTime initializationDate;
     private final XmlFileReader xmlFileReader = new XmlFileReader();
@@ -87,10 +87,16 @@ public class MclassCollection {
         System.out.println("Все элементы, превышающие заданный, были удалены.");
     }
 
-    public void addIfMin(Mclass element) {
-        Mclass minElement = mclasses.stream().min(Comparator.comparing(Mclass::getPrice)).orElse(null);
-        if (minElement == null || minElement.getPrice().compareTo(element.getPrice()) > 0) {
-            mclasses.add(element);
+    public void addIfMin(Mclass newElement) {
+        try {
+            if (mclasses.isEmpty() || newElement.compareTo(mclasses.stream().min(Mclass::compareTo).get()) < 0) {
+                mclasses.add(newElement);
+                System.out.println("Элемент добавлен.");
+            } else {
+                System.out.println("Элемент не добавлен, так как не является минимальным.");
+            }
+        } catch (Exception e) {
+            System.out.println("Произошла ошибка при добавлении элемента: " + e.getMessage());
         }
     }
 
@@ -164,7 +170,7 @@ public class MclassCollection {
                 rootElement.appendChild(mclassElement);
         }
 
-            xmlFileWriter.writeXmlFile(document,fileName);
+        xmlFileWriter.writeXmlFile(document,fileName);
     }catch (Exception e){
         e.printStackTrace();
         }

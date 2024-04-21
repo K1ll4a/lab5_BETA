@@ -1,11 +1,11 @@
 package utils;
 
-import org.w3c.dom.Document;
+import java.io.File;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
+import org.w3c.dom.Document;
 
 public class XmlFileWriter {
 

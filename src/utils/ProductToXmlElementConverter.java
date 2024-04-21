@@ -46,20 +46,20 @@ public class ProductToXmlElementConverter {
 
         Element OrgNameElement = document.createElement("OrgName");
         OrgNameElement.appendChild(document.createTextNode(mclass.getManufacturer().getOrgName()));
-        OrgNameElement.appendChild(OrgNameElement);
+        manufacturerElement.appendChild(OrgNameElement);
 
         Element OrgfullNameElement = document.createElement("fullName");
         OrgfullNameElement.appendChild(document.createTextNode(mclass.getManufacturer().getFullName()));
-        OrgfullNameElement.appendChild(OrgfullNameElement);
+        manufacturerElement.appendChild(OrgfullNameElement);
 
         Element OrgIdElement = document.createElement("OrgId");
         OrgIdElement.appendChild(document.createTextNode(String.valueOf(mclass.getManufacturer().getOrgId())));
-        OrgIdElement.appendChild(OrgIdElement);
+        manufacturerElement.appendChild(OrgIdElement);
 
         if (mclass.getManufacturer().getType() != null){
             Element typeElement = document.createElement("type");
             typeElement.appendChild(document.createTextNode(mclass.getManufacturer().getType().name()));
-            mclassElement.appendChild(typeElement);
+            manufacturerElement.appendChild(typeElement);
         }
         mclassElement.appendChild(manufacturerElement);
         return mclassElement;
