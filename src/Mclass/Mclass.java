@@ -1,6 +1,6 @@
 package Mclass;
 
-// import org.jetbrains.annotations.NotNull;
+
 
 import java.util.Objects;
 import java.util.Random;
@@ -35,7 +35,7 @@ public class Mclass implements Comparable<Mclass> {
 
 
     }
-    public Mclass(String name,Coordinates coordinates,Double price,Float manufactureCost,UnitOfMeasure unitOfMeasure,Organization manufacturer){
+    public Mclass(String name,Double price,Coordinates coordinates,Float manufactureCost,UnitOfMeasure unitOfMeasure,Organization manufacturer){
         this.id = random.nextLong(1, 1001);
         this.coordinates = coordinates;
         long randomEpochSecond = ThreadLocalRandom.current().nextLong(0, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
@@ -49,6 +49,8 @@ public class Mclass implements Comparable<Mclass> {
         this.manufacturer = manufacturer;
 
     }
+
+
 
 
 
@@ -254,31 +256,29 @@ public class Mclass implements Comparable<Mclass> {
         return manufacturer;
     }
 
-    public static Mclass parse(String str){
-        String[] parts = str.split(",");
-        if (parts.length != 8){
-            throw new IllegalArgumentException("Invalid input string format.");
-        }
-        String name = parts[0].trim();
-        Double price = Double.parseDouble(parts[1].trim());
-        Float x = Float.parseFloat(parts[3].trim());
-        Float y = Float.parseFloat(parts[4].trim());
+    public static Mclass parse(String str) {
+        String[] parts = str.split(","); // Assuming the string is in the format "name,price,x,y,manufactureCost,unitOfMeasure,orgName,fullName,type"
+
+        String name = parts[0];
+        Double price = Double.parseDouble(parts[1]);
+        float x = Float.parseFloat(parts[2]);
+        float y = Float.parseFloat(parts[3]);
+        float manufactureCost = Float.parseFloat(parts[4]);
+        UnitOfMeasure unitOfMeasure = UnitOfMeasure.valueOf(parts[5]);
+        String orgName = parts[6];
+        String fullName = parts[7];
+        OrganizationType type = OrganizationType.valueOf(parts[8]);
+
+        Organization manufacturer = new Organization(orgName, fullName, type);
         Coordinates coordinates = new Coordinates(x, y);
-        UnitOfMeasure unitOfMeasure = UnitOfMeasure.parseUnitOfMeasure(parts[5].trim());
-        String OrgName = parts[6].trim();
-        String fullName = parts[7].trim();
-        OrganizationType organizationType = OrganizationType.parseOrganizationType(parts[8].trim());
-        Float manufactureCost = Float.parseFloat(parts[9].trim());
-        Organization manufacturer = new Organization(OrgName,fullName,organizationType);
 
-        return new Mclass(name,price,coordinates,unitOfMeasure,manufactureCost,manufacturer);
-
+        return new Mclass(name, price, coordinates, manufactureCost, unitOfMeasure, manufacturer);
     }
 
     @Override
     public String toString(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return ("ID " + id + " Name " + name + " Coordinates " + coordinates.toString() + " Creation date " + creationDate.format(formatter) +  " Price " + String.valueOf(price)) + " Manufacture cost "  + String.valueOf(manufactureCost) + " Единица измерения: " + unitOfMeasure.toString() + " " +  manufacturer.toString();
+        return ("ID " + id + "," + " Name " + name + "," + " Coordinates " + coordinates.toString() + "," + " Creation date " + creationDate.format(formatter) + "," + " Price " + String.valueOf(price)) + "," + " Manufacture cost "  + String.valueOf(manufactureCost) + "," + " Единица измерения: " + unitOfMeasure.toString() + "," +  manufacturer.toString();
     }
 
 

@@ -57,7 +57,7 @@ public class ProductFromXmlElementConverter {
 
 
 // Создаем объект models.Mclass с полученными данными
-            Mclass mclass = new Mclass(name, new Coordinates(x, y), price, manufactureCost, unitOfMeasure,
+            Mclass mclass = new Mclass(name, price, new Coordinates(x, y), manufactureCost, unitOfMeasure,
                     new Mclass.Organization(OrgId,OrgName,fullName,type));
 
             return mclass;

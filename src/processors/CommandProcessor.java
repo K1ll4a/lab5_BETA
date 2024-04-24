@@ -50,8 +50,8 @@ public class CommandProcessor {
         this.commandHandlers.put("remove_greater", this::removeGreater);
         this.commandHandlers.put("min_by_manufacture_cost", this::minByManufactureCost);
         this.commandHandlers.put("max_by_manufacture_cost", this::maxByManufactureCost);
-        this.commandHandlers.put("count_less_than_manufacture_cost manufactureCost", this::countLessThanManufactureCost);
-        this.commandHandlers.put("add_if_min", this::addIfMin);
+        this.commandHandlers.put("countLessThanManufactureCost", this::countLessThanManufactureCost);
+        this.commandHandlers.put("addIfMin", this::addIfMin);
     }
 
     public void processCommand(String var1) {
@@ -94,7 +94,7 @@ public class CommandProcessor {
                         OrganizationType type = typeString.isEmpty() ? null : OrganizationType.valueOf(typeString);
                         Organization manufacturer = new Organization(orgName, fullName, type);
                         Coordinates coordinates = new Coordinates(x, y);
-                        Mclass mclass = new Mclass(name, coordinates, price, manufactureCost, unitOfMeasure, manufacturer);
+                        Mclass mclass = new Mclass(name, price,coordinates, manufactureCost, unitOfMeasure, manufacturer);
                         mclassCollection.addMclass(mclass);
                     } else {
                         processCommand(line);
@@ -205,11 +205,32 @@ public class CommandProcessor {
 
 
     private void addIfMin(String var1) {
-        Mclass var2 = Mclass.parse(var1); // предполагается, что есть метод для парсинга элемента
-        mclassCollection.addIfMin(var2);
+        Mclass newMclass = Mclass.parse(var1); // Assuming that Mclass has a static parse method
 
+        if (newMclass == null || newMclass.getPrice() == null) {
+            System.out.println("The price of the new product is not set, so it cannot be added to the collection.");
+            return;
+        }
+
+        if (mclassCollection.getMclasses().isEmpty()) {
+            // If the collection is empty, add the new object because it's the smallest by default
+            mclassCollection.addMclass(newMclass);
+            System.out.println("The new product has been added to the collection as it's the smallest.");
+        } else {
+            // If the collection is not empty, find the smallest Mclass object in the collection
+            Mclass smallestMclass = mclassCollection.getMclasses().stream()
+                    .min(Comparator.comparing(Mclass::getPrice)) // Assuming that the comparison is based on the price
+                    .orElseThrow();
+
+            // Compare the new Mclass object with the smallest one. If the new object is smaller, add it to the collection
+            if (newMclass.getPrice().doubleValue() < smallestMclass.getPrice().doubleValue()) { // Assuming that the comparison is based on the price
+                mclassCollection.addMclass(newMclass);
+                System.out.println("The new product has been added to the collection as it's smaller than the smallest existing product.");
+            } else {
+                System.out.println("The new product is not smaller than the smallest existing product, so it hasn't been added to the collection.");
+            }
+        }
     }
-
 
     private Organization promtOrganization() {
         System.out.println("Введите данные об организации: ");
@@ -331,7 +352,7 @@ public class CommandProcessor {
 
         UnitOfMeasure var8 = this.promtUnitOfMeasure();
         Organization var9 = this.promtOrganization();
-        Mclass var10 = new Mclass(var3, new Coordinates(var4, var5), var6, var7, var8, var9);
+        Mclass var10 = new Mclass(var3, var6, new Coordinates(var4, var5), var7, var8, var9);
         this.mclassCollection.addMclass(var10);
         System.out.println("Новый продукт успешно добавлен в коллекцию.");
 
@@ -411,7 +432,7 @@ public class CommandProcessor {
             UnitOfMeasure var11 = this.promtUnitOfMeasure();
             Organization var12 = this.promtOrganization();
             Long var13 = random.nextLong((1000 - 1 + 1) + 1);
-            Mclass var14 = new Mclass(var4, new Coordinates(var6, var7), var8, var9, var11, var12);
+            Mclass var14 = new Mclass(var4,var8,new Coordinates(var6, var7), var9, var11, var12);
             this.mclassCollection.updateMclass(var2, var14);
             System.out.println("Продукт с id " + var2 + " успешно обновлен.");
 

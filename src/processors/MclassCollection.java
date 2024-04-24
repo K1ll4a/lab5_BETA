@@ -91,12 +91,12 @@ public class MclassCollection  {
         try {
             if (mclasses.isEmpty() || newElement.compareTo(mclasses.stream().min(Mclass::compareTo).get()) < 0) {
                 mclasses.add(newElement);
-                System.out.println("Элемент добавлен.");
+                System.out.println("Element added.");
             } else {
-                System.out.println("Элемент не добавлен, так как не является минимальным.");
+                System.out.println("Element not added, as it is not the smallest.");
             }
         } catch (Exception e) {
-            System.out.println("Произошла ошибка при добавлении элемента: " + e.getMessage());
+            System.out.println("An error occurred while adding the element: " + e.getMessage());
         }
     }
 
