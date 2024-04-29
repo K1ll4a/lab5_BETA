@@ -11,7 +11,7 @@ import java.util.*;
 
 public class CommandProcessor {
     private final MclassCollection mclassCollection;
-    private Scanner scanner;
+    private final Scanner scanner;
     private final String fileName;
     private final Map<String, CommandHandler> commandHandlers;
     private static List<String> executedScripts;
@@ -23,7 +23,7 @@ public class CommandProcessor {
         this.scanner = var2;
         this.fileName = var3;
         this.commandHandlers = new HashMap<>();
-        this.executedScripts = new ArrayList<>();
+        executedScripts = new ArrayList<>();
         initializeCommandHandlers();
     }
 
@@ -44,7 +44,7 @@ public class CommandProcessor {
         this.commandHandlers.put("clear", this::clearCollection);
         this.commandHandlers.put("save", this::saveCollectionToFile);
         this.commandHandlers.put("remove_by_id id", this::removeMclassById);
-        this.commandHandlers.put("execute_sctipt", this::executeScript);
+        this.commandHandlers.put("executeScript", this::executeScript);
         this.commandHandlers.put("exit", this::exit);
         this.commandHandlers.put("remove_last", this::removeLast);
         this.commandHandlers.put("remove_greater", this::removeGreater);
@@ -87,7 +87,6 @@ public class CommandProcessor {
                         float y = Float.parseFloat(reader.readLine());
                         String unitOfMeasureString = reader.readLine();
                         UnitOfMeasure unitOfMeasure = UnitOfMeasure.valueOf(unitOfMeasureString);
-                        Integer OrgId = Integer.parseInt(reader.readLine());
                         String orgName = reader.readLine();
                         String fullName = reader.readLine();
                         String typeString = reader.readLine();

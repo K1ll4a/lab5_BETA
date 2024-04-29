@@ -1,27 +1,24 @@
 package utils;
 
 import Mclass.Mclass;
+import Mclass.Mclass.Coordinates;
+import Mclass.Mclass.OrganizationType;
+import Mclass.Mclass.UnitOfMeasure;
 import org.w3c.dom.Element;
-import Mclass.*;
-import Mclass.Mclass.*;
-import  Mclass.Mclass.Organization;
-
-import java.time.LocalDateTime;
 
 
 public class ProductFromXmlElementConverter {
 
     public Mclass createMclassFromElement(Element mclassElement) {
         try {
-            Long id = Long.parseLong(mclassElement.getElementsByTagName("id").item(0).getTextContent());
             String name = mclassElement.getElementsByTagName("name").item(0).getTextContent();
 
             Element coordinatesElement = (Element) mclassElement.getElementsByTagName("coordinates").item(0);
-            Integer x = Integer.parseInt(coordinatesElement.getElementsByTagName("x").item(0).getTextContent());
-            Integer y = Integer.parseInt(coordinatesElement.getElementsByTagName("y").item(0).getTextContent());
+            int x = Integer.parseInt(coordinatesElement.getElementsByTagName("x").item(0).getTextContent());
+            int y = Integer.parseInt(coordinatesElement.getElementsByTagName("y").item(0).getTextContent());
 
-            String creationDate = mclassElement.getElementsByTagName("creationDate").item(0).getTextContent();
-            LocalDateTime localDateTime = LocalDateTime.parse(creationDate);
+
+
 
             Double price = Double.parseDouble(mclassElement.getElementsByTagName("price").item(0).getTextContent());
 
@@ -57,10 +54,9 @@ public class ProductFromXmlElementConverter {
 
 
 // Создаем объект models.Mclass с полученными данными
-            Mclass mclass = new Mclass(name, price, new Coordinates(x, y), manufactureCost, unitOfMeasure,
-                    new Mclass.Organization(OrgId,OrgName,fullName,type));
 
-            return mclass;
+            return new Mclass(name, price, new Coordinates(x, y), manufactureCost, unitOfMeasure,
+                    new Mclass.Organization(OrgId,OrgName,fullName,type));
         } catch (Exception e) {
             System.out.println("Продукт не был добавлен в коллекцию по причине: " + e.getMessage());
             return null;
